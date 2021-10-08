@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".lockerfragment.MusicFileFragment">
+
+    <LinearLayout
+        android:id="@+id/musicfile_all_select_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp">
+
+        <ImageView
+            android:id="@+id/musicfile_select_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/btn_playlist_select_off"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/musicfile_select_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체듣기"
+            android:textSize="15sp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/musicfile_all_listen_container"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toEndOf="@id/musicfile_all_select_container"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="5dp"
+        android:layout_marginStart="20dp">
+
+        <ImageView
+            android:id="@+id/musicfile_listen_iv"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/icon_browse_arrow_right"
+            android:layout_gravity="center"/>
+        <TextView
+            android:id="@+id/musicfile_listen_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체듣기"
+            android:textSize="15sp"
+            android:layout_gravity="center"/>
+    </LinearLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/musicfile_all_select_container"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <LinearLayout
+            android:id="@+id/musicfile_container_cl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:text="저장된 파일이 없습니다"
+                android:textSize="15sp" />
+        </LinearLayout>
+
+
+    </androidx.core.widget.NestedScrollView>
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

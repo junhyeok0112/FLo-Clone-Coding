@@ -73,6 +73,20 @@ class SongActivity : AppCompatActivity() {
             setChangeRandom(true)
         }
 
+        //like 버튼
+        binding.songLikeIv.setOnClickListener {
+            setChangeLike(it)
+        }
+        binding.songLikeOnIv.setOnClickListener {
+            setChangeLike(it)
+        }
+        binding.songUnlikeIv.setOnClickListener {
+            setChangeLike(it)
+        }
+        binding.songUnlikeOnIv.setOnClickListener {
+            setChangeLike(it)
+        }
+
 
     }
 
@@ -123,12 +137,40 @@ class SongActivity : AppCompatActivity() {
         }
     }
 
+    fun setChangeLike(view :View){
+        when(view.id){
+            R.id.song_like_iv ->{
+                binding.songLikeIv.visibility = View.GONE
+                binding.songLikeOnIv.visibility = View.VISIBLE
+            }
+            R.id.song_like_on_iv ->{
+                binding.songLikeOnIv.visibility = View.GONE
+                binding.songLikeIv.visibility = View.VISIBLE
+            }
+            R.id.song_unlike_iv ->{
+                binding.songUnlikeIv.visibility = View.GONE
+                binding.songUnlikeOnIv.visibility = View.VISIBLE
+            }
+            R.id.song_unlike_on_iv->{
+                binding.songUnlikeOnIv.visibility = View.GONE
+                binding.songUnlikeIv.visibility = View.VISIBLE
+            }
+        }
+    }
+
     fun setTitleAndSingger(){
         if(intent.hasExtra("title") && intent.hasExtra("singger")){
             val title = intent.getStringExtra("title")
             val singger = intent.getStringExtra("singger")
             binding.songTitleTv.text = title
             binding.songSinggerTv.text = singger
+        }
+        if(intent.hasExtra("isPlaying")){
+            val isPlaying = intent.getBooleanExtra("isPlaying" , true)
+            //넘어온 true ,false값을 가지고 setChangePlay 호출 -> 이 때 매개변수가 false 면 Play로 바꾸고 있게 구현한 함수이므로
+            //isPlaying  이 true면 즉 Play되고 있으면 false로 바꿔서 넘겨줘야함
+            setChangePlay(!isPlaying)
+
         }
     }
 

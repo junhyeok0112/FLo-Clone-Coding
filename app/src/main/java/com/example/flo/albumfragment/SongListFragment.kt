@@ -1,4 +1,4 @@
-package com.example.flo
+package com.example.flo.albumfragment
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment

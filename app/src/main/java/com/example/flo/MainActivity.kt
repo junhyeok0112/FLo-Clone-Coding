@@ -7,7 +7,10 @@ import android.widget.ImageView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import com.example.flo.homefragment.HomeFragment
 import com.example.flo.databinding.ActivityMainBinding
+import com.example.flo.lockerfragment.LockerFragment
+
 //import com.example.flo.databinding.ActivityMainBinding
 
 
@@ -47,9 +50,14 @@ class MainActivity : AppCompatActivity() {
             var title = binding.mainTitleTv.text.toString()
             var singger = binding.mainSinggerTv.text.toString()
             var song = Song(title,singger)
+            var isPlaying = true    //플레이 중일떄
+            if(binding.mainMiniplayerBtn.visibility == View.GONE){ //멈춰있을떄
+                isPlaying = false
+            }
             val intent = Intent(this,SongActivity::class.java)
             intent.putExtra("title" , song.title)
             intent.putExtra("singger" , song.singger)
+            intent.putExtra("isPlaying" , isPlaying)
             activityLaucher.launch(intent)      //startActivityForResult 대신 실행
         }
 
