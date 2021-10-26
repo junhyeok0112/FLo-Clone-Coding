@@ -3,13 +3,18 @@ package com.example.flo
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.ImageView
+import android.widget.SeekBar
 import com.example.flo.databinding.ActivitySongBinding
+
 
 class SongActivity : AppCompatActivity() {
 
     lateinit var binding : ActivitySongBinding
+    private lateinit var player:Player
+    private val song = Song()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,9 +23,11 @@ class SongActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setImageView()
-        setTitleAndSingger()        //제목 가수 설정
+        initSong()        //제목 가수 플레이 타임 설정
 
-
+        player = Player(song.playTime, song.isPlaying)       //쓰레드 생성
+        player.initSecond()
+        player.start()          //쓰레드 시작
 
         //뒤로 가기시 현재 설정되어 있는 플레이 or pause main에 넘겨줌
         binding.songBackIv.setOnClickListener {
@@ -39,11 +46,14 @@ class SongActivity : AppCompatActivity() {
         }
 
         //play , pause 바꾸기
+        //내부 클래스의 변수에 접근가능
         binding.songPlayIv.setOnClickListener {
+            player.isPlaying = true         //쓰레드에 있는 isPlaying도 바꿔줘야함
             setChangePlay(true)
         }
 
         binding.songPauseIv.setOnClickListener {
+            player.isPlaying = false
             setChangePlay(false)
         }
 
@@ -88,11 +98,26 @@ class SongActivity : AppCompatActivity() {
         }
 
 
+        //SeekBar 변화시 적용
+        binding.songSeekbarSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
+            override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
+                var second = binding.songSeekbarSb.progress * song.playTime / 1000
+                player.setSecond(second)
+            }
+
+            override fun onStartTrackingTouch(seekBar: SeekBar?) {
+                //터치했을 때
+            }
+
+            override fun onStopTrackingTouch(seekBar: SeekBar?) {
+                //터치 끝났을 때
+            }
+        })
     }
 
     fun setChangePlay(isPlaying: Boolean){
         when(isPlaying){
-            true->{
+            true->{     //플레이중으로 변경
                 binding.songPauseIv.visibility = ImageView.VISIBLE
                 binding.songPlayIv.visibility = ImageView.GONE
             }
@@ -158,24 +183,72 @@ class SongActivity : AppCompatActivity() {
         }
     }
 
-    fun setTitleAndSingger(){
-        if(intent.hasExtra("title") && intent.hasExtra("singger")){
-            val title = intent.getStringExtra("title")
-            val singger = intent.getStringExtra("singger")
-            binding.songTitleTv.text = title
-            binding.songSinggerTv.text = singger
+    fun initSong(){
+        if(intent.hasExtra("title") && intent.hasExtra("singger") && intent.hasExtra("playTime")){
+            song.title = intent.getStringExtra("title")!!
+            song.singger = intent.getStringExtra("singger")!!
+            song.playTime = intent.getIntExtra("playTime",0)
+
+            binding.songEndTv.text = String.format("%02d:%02d" , song.playTime/60, song.playTime % 60)
+            binding.songTitleTv.text = song.title
+            binding.songSinggerTv.text = song.singger
         }
         if(intent.hasExtra("isPlaying")){
-            val isPlaying = intent.getBooleanExtra("isPlaying" , true)
+            song.isPlaying = intent.getBooleanExtra("isPlaying" , true)
             //넘어온 true ,false값을 가지고 setChangePlay 호출 -> 이 때 매개변수가 false 면 Play로 바꾸고 있게 구현한 함수이므로
             //isPlaying  이 true면 즉 Play되고 있으면 false로 바꿔서 넘겨줘야함
-            setChangePlay(!isPlaying)
-
+            setChangePlay(song.isPlaying)
+        }
+        if(intent.hasExtra("progress")){        //넘어온 양의 progress 받기
+            binding.songSeekbarSb.progress = intent.getIntExtra("progress" , 0)
         }
     }
 
     fun setImageView(){
         binding.songSsumnailIv.background = resources.getDrawable(R.drawable.round_temp , null)
         binding.songSsumnailIv.clipToOutline = true
+    }
+
+    //Thread 클래스 만들기
+    inner class Player(private val playTime: Int , var isPlaying: Boolean) : Thread(){
+        private var second = 0      //초기 시간
+
+        override fun run() {    //이 안에 코드가 start되면 시작
+            try{                //interruput 위해서 try ~ catch 사용
+                while (true){
+                    if(second >= playTime){
+                        if(binding.songRepeatOn1Iv.visibility == View.VISIBLE){
+                            second = 0
+                        } else{
+                            break
+                        }
+                    }
+                    if(isPlaying){
+                        sleep(1000)
+                        second++
+                        runOnUiThread {
+                            binding.songStartTv.text = String.format("%02d:%02d" , second/60 , second %60)
+                            binding.songSeekbarSb.progress = second * 1000 / playTime
+                        }
+                    }
+                }
+            }catch (e : InterruptedException){
+                Log.d("interruput" , "쓰레드가 종료되었습니다")
+            }
+        }
+
+        fun setSecond(tempSecond:Int){
+            second = tempSecond
+            binding.songStartTv.text = String.format("%02d:%02d" , second/60 , second %60)
+        }
+        fun initSecond(){       //Main에서 넘어온 만큼의 값으로 셋팅
+            second = binding.songSeekbarSb.progress * song.playTime / 1000
+            binding.songStartTv.text = String.format("%02d:%02d" , second/60 , second %60)
+        }
+    }
+
+    override fun onDestroy() {
+        player.interrupt()
+        super.onDestroy()
     }
 }

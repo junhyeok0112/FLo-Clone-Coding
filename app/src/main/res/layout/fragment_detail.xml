@@ -1,15 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".albumfragment.DetailFragment">
 
-    <!-- TODO: Update blank fragment layout -->
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="DetailFragment"
-        android:textSize="30sp"/>
+        android:id="@+id/detail_albumname_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="앨범명"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="5dp"/>
 
-</FrameLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="IU 5th Album 'LILAC'"
+        app:layout_constraintStart_toEndOf="@id/detail_albumname_tv"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="5dp"/>
+
+    <TextView
+        android:id="@+id/detail_artist_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="아티스트"
+        app:layout_constraintTop_toBottomOf="@id/detail_albumname_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="아이유 (IU)"
+        app:layout_constraintStart_toEndOf="@id/detail_artist_tv"
+        app:layout_constraintTop_toTopOf="@id/detail_artist_tv"
+        android:layout_marginStart="15dp" />
+
+    <TextView
+        android:id="@+id/detail_balmae_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="발매사"
+        app:layout_constraintTop_toBottomOf="@id/detail_artist_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="카카오엔터테인먼트"
+        app:layout_constraintStart_toEndOf="@id/detail_balmae_tv"
+        app:layout_constraintTop_toTopOf="@id/detail_balmae_tv"
+        android:layout_marginStart="15dp" />
+
+    <TextView
+        android:id="@+id/detail_company_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textStyle="bold"
+        android:text="기획사"
+        app:layout_constraintTop_toBottomOf="@id/detail_balmae_tv"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_margin="5dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="EDAM엔터테인먼트"
+        app:layout_constraintStart_toEndOf="@id/detail_company_tv"
+        app:layout_constraintTop_toTopOf="@id/detail_company_tv"
+        android:layout_marginStart="15dp" />
+
+    <TextView
+        android:id="@+id/detail_info_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="앨범정보"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detail_company_tv"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:id="@+id/detail_info_content_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="'아이유(IU)' 정규 5집 [LILAC]"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detail_info_tv"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="5dp"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/detail_info_content_tv"
+        android:layout_marginStart="5dp"
+        android:layout_marginTop="20dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&quot;안녕 꽃입 같은 안녕&quot;"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="&quot;내 맘에 아무 의문이 없어 난 이 다음으로 가요&quot;"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
+            android:text="20대의 마지막에 대해 화려한 '인사'를 예고했던 아이유가 봄 내음과 함께 다섯 번째 정규앨범 [LILAC]으로 돌아왔다. 4년만에 선보이는 정규앨범[LILAC]은 스무 살의 솔직하고
+풋풋한 감성을 담아 발표했던 20대의 첫 앨범 [스무 살의 봄]과는 달리, 지금껏 지나온 20대를 10개의 트랙에 다채로운 시각으로 풀어내 그동안의 성숙해진 감성을 오롯이 담았다"/>
+
+    </LinearLayout>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

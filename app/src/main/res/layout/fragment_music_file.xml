@@ -26,7 +26,7 @@
             android:id="@+id/musicfile_select_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="전체듣기"
+            android:text="전체선택"
             android:textSize="15sp"
             android:layout_gravity="center"/>
     </LinearLayout>

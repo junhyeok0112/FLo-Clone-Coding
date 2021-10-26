@@ -2,6 +2,10 @@ package com.example.flo.homefragment
 
 import android.graphics.Bitmap
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.transition.Slide
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -22,6 +26,9 @@ import com.example.flo.databinding.FragmentHomeBinding
 class HomeFragment : Fragment() {
 
     lateinit var binding: FragmentHomeBinding
+    lateinit var slideBanner: SlideBanner
+    lateinit var slidePannel: SlidePannel
+    lateinit var handler : Handler
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -30,6 +37,13 @@ class HomeFragment : Fragment() {
     ): View {
         binding = FragmentHomeBinding.inflate(inflater, container, false)
         setViewpager()
+        handler = Handler(Looper.getMainLooper())
+
+        slideBanner = SlideBanner()
+        slidePannel = SlidePannel()
+        slideBanner.start()
+        slidePannel.start()
+
 
         //오늘 앨범 누르면 이동
         binding.homeTodayAlbum1Container.setOnClickListener {
@@ -128,12 +142,67 @@ class HomeFragment : Fragment() {
         binding.homePanelViewpagerVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
-
                 binding.homePanelIndicator.animatePageSelected(position)
-
+                //현재 바뀐 페이지를 쓰레드에도 알려줘야함
+                slidePannel.setPosition(position)
             }
         })
 
+        binding.homeBannerViewpagerVp.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback(){
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                slideBanner.setPosition(position)
+            }
+        })
+    }
 
+    inner class SlideBanner : Thread(){
+        private var currentPosition = 0
+        override fun run() {
+            try{
+                while(true){
+                    if(currentPosition >= 4) currentPosition = 0    //한바퀴 돌았으면 초기화
+                    sleep(3000)
+                    handler.post {
+                        binding.homeBannerViewpagerVp.setCurrentItem(currentPosition, true)
+                    }
+                    currentPosition++
+                }
+            }catch(e: InterruptedException){
+                Log.d("Thread Interrupt" , "SlideBanner 쓰레드 종료")
+            }
+        }
+        fun setPosition(position:Int){
+            currentPosition = position
+        }
+    }
+
+    inner class SlidePannel : Thread(){
+        private var currentPosition = 0
+        override fun run() {
+            try{
+                while(true){
+                    if(currentPosition >= 10) currentPosition = 0    //한바퀴 돌았으면 초기화
+                    sleep(3000)
+                    handler.post{
+                        binding.homePanelViewpagerVp.setCurrentItem(currentPosition, true)
+                    }
+                    currentPosition++
+                }
+            }catch (e:InterruptedException){
+                Log.d("Thread Interrupt" , "SlidePannel 쓰레드 종료")
+            }
+
+        }
+
+        fun setPosition(position:Int){
+            currentPosition = position
+        }
+    }
+
+    override fun onDestroy() {
+        slidePannel.interrupt()
+        slideBanner.interrupt()
+        super.onDestroy()
     }
 }
