@@ -1,6 +1,7 @@
 package com.example.flo
 
 import android.content.Intent
+import android.media.MediaPlayer
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -8,14 +9,22 @@ import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
 import com.example.flo.databinding.ActivitySongBinding
+import com.google.gson.Gson
+import java.lang.Exception
+import java.text.SimpleDateFormat
 
 
 class SongActivity : AppCompatActivity() {
 
     lateinit var binding : ActivitySongBinding
     private lateinit var player:Player
-    private val song = Song()
+    private var song = Song()
+    
+    //미디어 플레이어 선언
+    private var mediaPlayer : MediaPlayer? = null
 
+    //Gson 선언
+    private var gson : Gson = Gson()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -26,34 +35,33 @@ class SongActivity : AppCompatActivity() {
         initSong()        //제목 가수 플레이 타임 설정
 
         player = Player(song.playTime, song.isPlaying)       //쓰레드 생성
-        player.initSecond()
         player.start()          //쓰레드 시작
+        Log.d("Song","Thread 시작")
 
         //뒤로 가기시 현재 설정되어 있는 플레이 or pause main에 넘겨줌
         binding.songBackIv.setOnClickListener {
-            var isPlaying = true
-            if(binding.songPlayIv.visibility == View.GONE){ //멈춤상태면
-                isPlaying = false
-            } else{
-                isPlaying = true
-            }
-
-            //현재 플레이 상태 돌려보내기
+            song.currentPosition = mediaPlayer?.currentPosition!!
             val intent = Intent()
-            intent.putExtra("isPlaying" , isPlaying)
+            val songToJson = gson.toJson(song)
+            intent.putExtra("song",songToJson)
             setResult(RESULT_OK , intent)
             finish()
         }
 
+
         //play , pause 바꾸기
         //내부 클래스의 변수에 접근가능
         binding.songPlayIv.setOnClickListener {
-            player.isPlaying = true         //쓰레드에 있는 isPlaying도 바꿔줘야함
+            player.isPlaying = true         //쓰레드에 있는 isPlaying도 바꿔줘야
+            mediaPlayer?.start()            //플레이 버튼 눌렀을 때 음악 재생
+            song.isPlaying = true           //현재 노래 재생상태도 저장
             setChangePlay(true)
         }
 
         binding.songPauseIv.setOnClickListener {
             player.isPlaying = false
+            mediaPlayer?.pause()
+            song.isPlaying = false
             setChangePlay(false)
         }
 
@@ -101,8 +109,7 @@ class SongActivity : AppCompatActivity() {
         //SeekBar 변화시 적용
         binding.songSeekbarSb.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener{
             override fun onProgressChanged(seekBar: SeekBar?, progress: Int, fromUser: Boolean) {
-                var second = binding.songSeekbarSb.progress * song.playTime / 1000
-                player.setSecond(second)
+                mediaPlayer?.seekTo(progress)
             }
 
             override fun onStartTrackingTouch(seekBar: SeekBar?) {
@@ -184,23 +191,30 @@ class SongActivity : AppCompatActivity() {
     }
 
     fun initSong(){
-        if(intent.hasExtra("title") && intent.hasExtra("singger") && intent.hasExtra("playTime")){
-            song.title = intent.getStringExtra("title")!!
-            song.singger = intent.getStringExtra("singger")!!
-            song.playTime = intent.getIntExtra("playTime",0)
+        if(intent.hasExtra("song")){
+            song = gson.fromJson(intent.getStringExtra("song"),Song::class.java)
+            Log.d("song","SongActivity에서 song : ${song}")
+            var timeFormat = SimpleDateFormat("mm:ss")
 
-            binding.songEndTv.text = String.format("%02d:%02d" , song.playTime/60, song.playTime % 60)
+            binding.songStartTv.text= timeFormat.format(song.currentPosition)
+            binding.songEndTv.text = timeFormat.format(song.playTime)
             binding.songTitleTv.text = song.title
             binding.songSinggerTv.text = song.singger
-        }
-        if(intent.hasExtra("isPlaying")){
-            song.isPlaying = intent.getBooleanExtra("isPlaying" , true)
-            //넘어온 true ,false값을 가지고 setChangePlay 호출 -> 이 때 매개변수가 false 면 Play로 바꾸고 있게 구현한 함수이므로
-            //isPlaying  이 true면 즉 Play되고 있으면 false로 바꿔서 넘겨줘야함
+
             setChangePlay(song.isPlaying)
-        }
-        if(intent.hasExtra("progress")){        //넘어온 양의 progress 받기
-            binding.songSeekbarSb.progress = intent.getIntExtra("progress" , 0)
+
+            val music = resources.getIdentifier(song.music , "raw" , this.packageName)      //리소스 이름을 가지고 리소스 반환받기
+            mediaPlayer = MediaPlayer.create(this , music)
+            binding.songSeekbarSb.max = mediaPlayer?.duration!!                             //SeekBar의 최대치를 Music과 맞춤
+            binding.songSeekbarSb.progress = song.currentPosition                           //받아온 정보로 SeekBar 셋팅
+            mediaPlayer?.seekTo(song.currentPosition)                                        //진행 되었던 부분까지 셋팅
+            Log.d("song","music create 실행")
+            if(song.isPlaying){                     //Main에서 멈췄던 위치 받아오고 만약 Play상태면 계속 실행
+                mediaPlayer?.start()
+            } else{
+                mediaPlayer?.start()
+                mediaPlayer?.pause()
+            }
         }
     }
 
@@ -210,25 +224,29 @@ class SongActivity : AppCompatActivity() {
     }
 
     //Thread 클래스 만들기
-    inner class Player(private val playTime: Int , var isPlaying: Boolean) : Thread(){
-        private var second = 0      //초기 시간
-
+    inner class Player(private val playTime: Int , var isPlaying: Boolean ) : Thread(){
+        var timeFormat = SimpleDateFormat("mm:ss")
+        var second = song.currentPosition * 1000
         override fun run() {    //이 안에 코드가 start되면 시작
             try{                //interruput 위해서 try ~ catch 사용
                 while (true){
-                    if(second >= playTime){
+                    if(song.currentPosition >= playTime){       //만약 끝까지 다 찼으면 초기화
                         if(binding.songRepeatOn1Iv.visibility == View.VISIBLE){
-                            second = 0
+                            binding.songSeekbarSb.progress = 0
+                            mediaPlayer?.pause()
+                            mediaPlayer?.seekTo(0)       //처음으로 돌아가
                         } else{
+                            Log.d("Song","Thread 탈출")
                             break
                         }
                     }
                     if(isPlaying){
                         sleep(1000)
+                        //Log.d("Song", "쓰레드 진행중")
                         second++
                         runOnUiThread {
-                            binding.songStartTv.text = String.format("%02d:%02d" , second/60 , second %60)
-                            binding.songSeekbarSb.progress = second * 1000 / playTime
+                            binding.songStartTv.text = timeFormat.format(mediaPlayer?.currentPosition)
+                            binding.songSeekbarSb.progress = mediaPlayer?.currentPosition!!
                         }
                     }
                 }
@@ -237,18 +255,34 @@ class SongActivity : AppCompatActivity() {
             }
         }
 
-        fun setSecond(tempSecond:Int){
-            second = tempSecond
-            binding.songStartTv.text = String.format("%02d:%02d" , second/60 , second %60)
-        }
-        fun initSecond(){       //Main에서 넘어온 만큼의 값으로 셋팅
-            second = binding.songSeekbarSb.progress * song.playTime / 1000
-            binding.songStartTv.text = String.format("%02d:%02d" , second/60 , second %60)
-        }
     }
 
-    override fun onDestroy() {
-        player.interrupt()
-        super.onDestroy()
+    override fun onPause() {         //액티비티가 포커스 잃으면 노래 중지
+        super.onPause()
+        mediaPlayer?.pause()        //미디어 플레이어 중지
+        player.isPlaying = false    //쓰레드 중지
+        song.isPlaying = false      //중지되었으니까 멈춤
+        song.currentPosition = mediaPlayer?.currentPosition!!
+        setChangePlay(false)
+
+        //앱이 종료되었다가 다시 시작하면 종료된 시점부터 사용하기 위해 종료 시점을 sharedPreferences 로 저장
+        val sharedPreferences = getSharedPreferences("song" , MODE_PRIVATE)
+        val editor = sharedPreferences.edit()                   //sharedPreferences를 조작할 때 사용 -> 저장 등 할 때 사용
+        val songToJson = gson.toJson(song)                     //song 데이터 객체를 Json 형태로 저장해줄것임
+        editor.putString("song", songToJson)                    //Gson 이 객체를 String 형식으로 한줄로 정렬
+        editor.apply()
+
     }
+
+    override fun onStart() {
+        super.onStart()
+
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        player.interrupt()
+        mediaPlayer?.release()      //미디어 플레이어 리소스 해제(음악 해제) -> 메모리 절약을 위해 해제해주어야함
+        mediaPlayer = null
+    }
+
 }
