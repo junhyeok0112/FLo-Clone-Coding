@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/round_video">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            app:cardCornerRadius="7dp"
+            app:cardElevation="0dp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+            <ImageView
+                android:id="@+id/itemAlbum_cover_iv"
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:scaleType="fitCenter"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                android:src="@drawable/img_album_exp2" />
+        </androidx.cardview.widget.CardView>
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/widget_black_play"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <TextView
+        android:id="@+id/itemAlbum_title_tv"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="라일락"
+        android:autoSizeTextType="uniform"
+        android:textStyle="bold"
+        android:layout_marginTop="3dp" />
+
+    <TextView
+        android:id="@+id/itemAlbum_singer_tv"
+        android:layout_width="150dp"
+        android:layout_height="wrap_content"
+        android:text="아이유"
+        android:autoSizeTextType="uniform"
+        android:textColor="#a8a8a8"
+        android:textSize="15sp"
+        android:layout_marginTop="3dp"/>
+
+
+</LinearLayout>
