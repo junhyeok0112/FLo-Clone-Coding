@@ -9,5 +9,6 @@ data class Album(
     var title: String? = "",
     var singer: String? = "",
     var coverImg: Int? = null,
+    var coverImgUrl : String? = ""
     //var songs : ArrayList<Song> = ArrayList()
 )

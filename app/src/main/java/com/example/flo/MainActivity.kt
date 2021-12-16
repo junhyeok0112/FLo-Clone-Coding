@@ -9,14 +9,13 @@ import android.widget.ImageView
 import android.widget.SeekBar
 import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.flo.Data.Album
 import com.example.flo.Data.Song
-import com.example.flo.adapter.AlbumRVAdapter
 import com.example.flo.homefragment.HomeFragment
 import com.example.flo.databinding.ActivityMainBinding
 import com.example.flo.lockerfragment.LockerFragment
+import com.example.flo.look.LookFragment
 import com.google.gson.Gson
 import java.text.SimpleDateFormat
 
@@ -33,6 +32,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
     private var gson:Gson = Gson()
     private var nowsong: Song = Song()
     private var mediaPlayer : MediaPlayer? = null
+    private lateinit var songDB: SongDatabase
 
     private var albumSongs : ArrayList<Song> = ArrayList()       //앨범눌렀을 때 저장될 노래들
     var pos = 0                                     //앨범에서 몇번째 노래가 재생되고 있는지.
@@ -42,17 +42,11 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        songDB = SongDatabase.getInstance(this)!!
         initNavigation()
         initListener()
         inputDummyAlbums()
         inputDummySongs()
-
-//        song = Song("라일락" , "아이유(IU)", "",215,false,"music_lilac",0)   //기본값 셋팅
-//        setMiniPlayer(song) //더미 기본값 셋팅
-
-        //mediaPlayer?.prepareAsync()
-
-
     }
 
 
@@ -77,7 +71,6 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
         setChangePlay(false)
         pos = 0                             //pos 값 초기화
         nowsong = albumSongs.get(pos)
-        Log.d("Main" , "현재 pos 값 : ${pos} , 현재 노래 : ${nowsong}")
         setMiniPlayer(nowsong)
 
     }
@@ -89,7 +82,6 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
         binding.mainSinggerTv.text = song.singger
 
         val music = resources.getIdentifier(song.music,  "raw",this.packageName )
-        Log.d("예시","${song.music}")
         mediaPlayer = MediaPlayer.create(this,music)
         binding.mainSeekBarSb.max = mediaPlayer?.duration!!
         binding.mainSeekBarSb.progress = (song.second * 1000)
@@ -112,7 +104,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
     }
 
     private fun inputDummyAlbums(){
-        val songDB = SongDatabase.getInstance(this)!!       //어짜피 DB는 하나
+        val songDB = SongDatabase.getInstance(this)!!
         val albums = songDB.albumDao().getAlbums()
 
         if(albums.isNotEmpty()) return                              //이미 앨범 정보가 있으면 리턴
@@ -170,6 +162,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_lilac",
                 R.drawable.img_album_exp2,
+                "",
                 false,
                 1
             )
@@ -184,6 +177,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_flu",
                 R.drawable.img_album_exp2,
+                "",
                 false,
                 1
             )
@@ -198,6 +192,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_celebrity",
                 R.drawable.img_album_exp,
+                "",
                 false,
                 2
             )
@@ -212,6 +207,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_empty_cup",
                 R.drawable.img_album_exp,
+                "",
                 false,
                 2
             )
@@ -226,6 +222,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_epilogue",
                 R.drawable.img_album_exp,
+                "",
                 false,
                 2
             )
@@ -240,6 +237,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_next_level",
                 R.drawable.img_album_exp3,
+                "",
                 false,
                 3
             )
@@ -254,6 +252,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_hi_spring_bye",
                 R.drawable.img_album_exp3,
+                "",
                 false,
                 3
             )
@@ -268,6 +267,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_my_sea",
                 R.drawable.img_album_exp4,
+                "",
                 false,
                 4
             )
@@ -282,6 +282,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_troll",
                 R.drawable.img_album_exp4,
+                "",
                 false,
                 4
             )
@@ -296,6 +297,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_lilac",
                 R.drawable.img_album_exp4,
+                "",
                 false,
                 4
             )
@@ -310,6 +312,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_coin",
                 R.drawable.img_album_exp5,
+                "",
                 false,
                 5
             )
@@ -324,6 +327,7 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                 false,
                 "music_flu",
                 R.drawable.img_album_exp5,
+                "",
                 false,
                 5
             )
@@ -369,7 +373,9 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
                         mediaPlayer = null
                         runOnUiThread {
                             Log.d("Main", "Thread 내부에서 setMiniPlayer 실행")
-                            setMiniPlayer(albumSongs.get(pos))
+                            songDB.songDao().updateSecondById(0, nowsong.id)
+                            nowsong = albumSongs.get(pos)                                   //다음 곡을nowsong으로
+                            setMiniPlayer(nowsong)
                         }
                     }
                     if(isPlaying){
@@ -402,7 +408,8 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
             Toast.makeText(this,"last song", Toast.LENGTH_SHORT).show()
             return
         }
-
+        //이런 DB작업들 나중에 전부 Thread 처리
+        songDB.songDao().updateSecondById(0,nowsong.id)           //다음곡으로 넘어가면 이전 곡 Second 0 으로
         pos += direct
         player.interrupt()
         startPlayer()
@@ -434,31 +441,25 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
             }
         })
 
-        //콜백 메서드 설정 -> onActivityResult와 같은역할
-        activityLaucher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
-            if(result.resultCode == RESULT_OK) {
-                val songDb = SongDatabase.getInstance(this)
-                nowsong = songDb?.songDao()!!.getSong(intent.getIntExtra("songId", 1))      //받아온 정보를 song 객체로변환
-                player.isPlaying = nowsong.isPlaying
-                isPlaying = nowsong.isPlaying
-                setChangePlay(nowsong.isPlaying)
-                Log.d("Main", "startActivityForResult : ${nowsong}" )
-                setMiniPlayer(nowsong)
-                if(nowsong.isPlaying){                     //계속 플레이중일떄
-                    mediaPlayer?.start()
-                }else{
-                    mediaPlayer?.start()        //start를 안해주면 오류가 남 -> 왜 ?
-                    mediaPlayer?.pause()
-                }
-            }
-            Log.d("Main", "startActivityForResult 실행")
-        }
+//        //콜백 메서드 설정 -> onActivityResult와 같은역할
+//        activityLaucher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){ result ->
+//            if(result.resultCode == RESULT_OK) {//노래는 onStart 에서 셋팅 됨
+//                Log.d("Song 에서 Main으로" , "${nowsong.isPlaying}")
+//                player.isPlaying = nowsong.isPlaying
+//                isPlaying = nowsong.isPlaying
+//                setChangePlay(nowsong.isPlaying)
+//                if(nowsong.isPlaying) {                     //계속 플레이중일떄
+//                    mediaPlayer?.start()
+//                }
+//            }
+//        }
 
 
         //미니 플레이어 클릭시 실행
         binding.mainPlayerLayout.setOnClickListener {
-            val songDb = SongDatabase.getInstance(this)
-            songDb?.songDao()?.updateSecondById(binding.mainSeekBarSb.progress / 1000 , nowsong.id)
+            val songDB = SongDatabase.getInstance(this)!!
+            songDB.songDao().updateSecondById(binding.mainSeekBarSb.progress / 1000 , nowsong.id)
+            songDB.songDao().updateIsPlayingById(nowsong.isPlaying, nowsong.id)             //플레이상태 전달
             val intent = Intent(this,SongActivity::class.java)
             val nowSongToJson = gson.toJson(nowsong)
             intent.putExtra("nowsong",nowSongToJson)
@@ -466,7 +467,8 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
             player.interrupt()
             mediaPlayer?.release()
             mediaPlayer = null
-            activityLaucher.launch(intent)      //startActivityForResult 대신 실행
+            //activityLaucher.launch(intent)      //startActivityForResult 대신 실행
+            startActivity(intent)
         }
 
         //미니 플레이어 버튼 눌렀을 시 변경
@@ -541,18 +543,21 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
         }else{
             songDB.songDao().getSong(songId)
         }
+        Log.d("Main의 onstart", "${nowsong}")
         setMiniPlayer(nowsong)
 
         //노래가 들어있는 앨범리스트 다시 적용해줘야함
-        val SongList = songDB.songDao().getSongs()              //모든 노래들을 담은 리스트
-        val albumId = nowsong.albumIdx
         albumSongs.clear()                                          //이전 앨범에 있는 노래 비움
-        for(nowSong : Song in SongList){                               //앨범 ID와 동일한 albumIndex를 가지는 노래들만 List에 추가
-            if(albumId == nowSong.albumIdx){
-                albumSongs.add(nowSong)                              //여기서는 songs가 플레이 리스트
-            }
-        }
+        albumSongs = songDB.songDao().getSongsInAlbum(nowsong.albumIdx) as ArrayList
         pos = getPlaySongPosition(nowsong.id)                       //여기까지하면 지금 노래가 앨범에서 몇번째인지 , 해당앨범에 있는 노래 전부가져옴
+
+        player.isPlaying = nowsong.isPlaying
+        isPlaying = nowsong.isPlaying
+        setChangePlay(nowsong.isPlaying)
+        if(nowsong.isPlaying) {                     //계속 플레이중일떄
+            mediaPlayer?.start()
+        }
+
     }
 
     fun getPlaySongPosition(songId: Int) : Int{               //주어진 노래가 앨범에서 몇번째인지 셋팅
@@ -570,7 +575,6 @@ class MainActivity : AppCompatActivity(), onAlbumClickListener  {
         player.isPlaying = false    //쓰레드 중지
         nowsong.isPlaying = false      //중지되었으니까 멈춤
         setChangePlay(false)
-        Log.d("main" , "Main의 onPause : ${nowsong}")
         //앱이 종료되었다가 다시 시작하면 종료된 시점부터 사용하기 위해 종료 시점을 sharedPreferences 로 저
 
         val sharedPreferences = getSharedPreferences("song" , MODE_PRIVATE)

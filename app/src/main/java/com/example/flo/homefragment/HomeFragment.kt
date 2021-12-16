@@ -21,12 +21,14 @@ import com.example.flo.adapter.PanelViewpagerAdapter
 import com.example.flo.albumfragment.AlbumFragment
 import com.example.flo.databinding.FragmentHomeBinding
 import com.example.flo.onAlbumClickListener
+import com.example.flo.retrofit.AlbumService
+import com.example.flo.retrofit.SongService
 import com.google.gson.Gson
 
 //import com.example.flo.databinding.FragmentHomeBinding
 
 
-class HomeFragment(var mContext:MainActivity) : Fragment() {
+class HomeFragment(var mContext:MainActivity) : Fragment() , HomeView {
 
     lateinit var binding: FragmentHomeBinding
     lateinit var slideBanner: SlideBanner
@@ -37,6 +39,7 @@ class HomeFragment(var mContext:MainActivity) : Fragment() {
 
     private var albums = ArrayList<Album>()
     private lateinit var songDB: SongDatabase
+    private lateinit var potAdpater : AlbumRVAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -56,8 +59,9 @@ class HomeFragment(var mContext:MainActivity) : Fragment() {
         mAlbumClickListener = mContext
 
 
-        val albumAdpater = AlbumRVAdapter(albums)
+        val albumAdpater = AlbumRVAdapter(requireContext())
         binding.homeTodayRv.adapter = albumAdpater
+        albumAdpater.addItems(albums)
 
         //외부에서 리스너 객체 전달
         albumAdpater.setMyItemClickListener(object : AlbumRVAdapter.MyItemClickListener{    //Adapter가 클릭됐을때 하는 행동정의
@@ -65,7 +69,7 @@ class HomeFragment(var mContext:MainActivity) : Fragment() {
             override fun onItemClick(album: Album) { //onClick시에 Album을 넣으면 자동으로 선택된 Album이 매개변수로 ?
                 //-> Adapter에 있는 position값과 같이 HomeFragment로 넘어와서 자동 셋팅
                 //프래그먼트끼리 데이터 저장시 Bundle 사용 , Bundle을 Arguments로 넘겨줘야함
-                //changeAlbumFragemnt(album)
+                changeAlbumFragemnt(album)
 
             }
 
@@ -85,6 +89,14 @@ class HomeFragment(var mContext:MainActivity) : Fragment() {
         slideBanner.start()
         slidePannel.start()
 
+
+
+        potAdpater = AlbumRVAdapter(requireContext())
+        binding.homePotRv.adapter = potAdpater
+        binding.homePotRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL,false)
+
+        getPots()                           //앨범리스트 Retrofit으로 호출
+
         return binding.root
     }
 
@@ -99,6 +111,7 @@ class HomeFragment(var mContext:MainActivity) : Fragment() {
             })
             .commitAllowingStateLoss()
     }
+
 
 
     fun setViewpager(){
@@ -190,6 +203,27 @@ class HomeFragment(var mContext:MainActivity) : Fragment() {
 
         fun setPosition(position:Int){
             currentPosition = position
+        }
+    }
+
+    private fun getPots(){
+        val albumService = AlbumService()
+        albumService.setHomeView(this)
+
+        albumService.getAlbums()
+    }
+
+    override fun onGetAlbumsLoading() {
+
+    }
+
+    override fun onGetAlbumsSuccess(albums: ArrayList<Album>) {
+        potAdpater.addItems(albums)
+    }
+
+    override fun onGetAlbumsFailure(code: Int, message: String) {
+        when(code){
+            400 -> Log.d("LOOKFRAG/API-ERROR", message)
         }
     }
 

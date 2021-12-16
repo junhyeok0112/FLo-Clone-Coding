@@ -27,7 +27,7 @@ class SaveSongFragment : Fragment() {
         binding = FragmentSaveSongBinding.inflate(inflater , container , false)
         songDB = SongDatabase.getInstance(requireContext())!!
 
-        val lockerSongAdapter = LockerRVAdapter()
+        val lockerSongAdapter = LockerRVAdapter(requireContext())
         binding.savesongRecyclerRv.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL , false)
         lockerSongAdapter.setMyItemClickListener(object : LockerRVAdapter.MyItemClickListener{
             override fun onRemoveSong(songId: Int) {

@@ -28,6 +28,7 @@
                 android:src="@drawable/img_album_exp2" />
         </androidx.cardview.widget.CardView>
         <ImageView
+            android:id="@+id/itemAlbum_start_iv"
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:src="@drawable/widget_black_play"

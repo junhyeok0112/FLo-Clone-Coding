@@ -8,10 +8,11 @@ import com.example.flo.Data.Album
 import com.example.flo.Data.Song
 
 
-@Database(entities = [Song::class, Album::class], version = 4)
+@Database(entities = [Song::class, Album::class,User::class , Like::class], version = 9)
 abstract class SongDatabase: RoomDatabase() {
     abstract fun albumDao(): AlbumDao
     abstract fun songDao(): SongDao
+    abstract fun userDao():UserDao
 
     companion object {
         private var instance: SongDatabase? = null

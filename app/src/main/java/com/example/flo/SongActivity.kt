@@ -8,6 +8,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageView
 import android.widget.SeekBar
+import android.widget.TextView
 import android.widget.Toast
 import com.example.flo.Data.Song
 import com.example.flo.databinding.ActivitySongBinding
@@ -61,7 +62,7 @@ class SongActivity : AppCompatActivity() {
                 binding.songPlayIv.visibility = ImageView.VISIBLE
 
                 //왠지 모르지만 start 한다음 pause해야함
-               mediaPlayer?.start()
+                mediaPlayer?.start()
                 mediaPlayer?.pause()
             }
         }
@@ -130,15 +131,9 @@ class SongActivity : AppCompatActivity() {
     }
 
     fun initPlayList(){
-
-        val SongList = songDB.songDao().getSongs()              //모든 노래들을 담은 리스트
-        var albumId = nowsong.albumIdx
-        songs.clear()                                          //이전 앨범에 있는 노래 비움
-        for(nowSong : Song in SongList){                               //앨범 ID와 동일한 albumIndex를 가지는 노래들만 List에 추가
-            if(albumId == nowSong.albumIdx){
-                songs.add(nowSong)                              //여기서는 songs가 플레이 리스트
-            }
-        }
+        val albumId = nowsong.albumIdx
+        songs.clear() //이전 앨범에 있는 노래 비움
+        songs = songDB.songDao().getSongsInAlbum(albumId) as ArrayList
         Log.d("Song","SongList : ${songs.toString()}")
     }
 
@@ -214,6 +209,7 @@ class SongActivity : AppCompatActivity() {
                 Log.d("Song" , "지금 시간 : ${second}")
                 while (true){
                     if(second >= playTime){       //만약 끝까지 다 찼으면 멈춰
+                        songDB.songDao().updateSecondById(0,nowsong.id)
                         break
                     }
                     if(isPlaying){
@@ -237,14 +233,18 @@ class SongActivity : AppCompatActivity() {
         binding.songBackIv.setOnClickListener {
             nowsong.second = (binding.songSeekbarSb.progress) /1000
             songDB.songDao().updateSecondById(nowsong.second , nowsong.id)
-            val intent = Intent()
-            val songToJson = gson.toJson(nowsong)
-            intent.putExtra("song",songToJson)
-            intent.putExtra("songId", nowsong.id)
+            songDB.songDao().updateIsPlayingById(nowsong.isPlaying , nowsong.id)
+            //intent 값이 잘 안 넘어가는 버그 있음
+            val sharedPreferences = getSharedPreferences("song" , MODE_PRIVATE)
+            val editor = sharedPreferences.edit()                   //sharedPreferences를 조작할 때 사용 -> 저장 등 할 때 사용
+
+            editor.putInt("songId",nowsong.id)                //ID로 정보 전달 , Activity 전환되면서 현재 노래의 id 전달
+            editor.apply()
+
             player.interrupt()
             mediaPlayer?.release()
             mediaPlayer = null
-            setResult(RESULT_OK , intent)
+
             finish()
         }
 
@@ -289,10 +289,12 @@ class SongActivity : AppCompatActivity() {
         binding.songLikeIv.setOnClickListener {
             setChangeLike(it)
             setLike(nowsong.isLike)             //isLike 갱신
+            showCustomToast("좋아요 한 곡에 담겼습니다.")
         }
         binding.songLikeOnIv.setOnClickListener {
             setChangeLike(it)
             setLike(nowsong.isLike)
+            showCustomToast("좋아요 한 곡이 취소되었습니다.")
         }
         binding.songUnlikeIv.setOnClickListener {
             setChangeLike(it)
@@ -336,7 +338,7 @@ class SongActivity : AppCompatActivity() {
             Toast.makeText(this,"last song", Toast.LENGTH_SHORT).show()
             return
         }
-
+        songDB.songDao().updateSecondById(0,nowsong.id)
         nowPos += direct
         player.interrupt()
         startPlayer()
@@ -352,10 +354,21 @@ class SongActivity : AppCompatActivity() {
         songDB.songDao().updateIsById(!isLike , nowsong.id)
     }
 
+    fun showCustomToast(msg : String){
+        val view = layoutInflater.inflate(R.layout.toast_like, null)
+        var textView : TextView = view.findViewById(R.id.toast_msg_tv)
+        textView.text = msg
+        var toast = Toast(this)
+        toast.view = view
+        toast.show()
+    }
+
     override fun onPause() {         //액티비티가 포커스 잃으면 노래 중지
         super.onPause()
+        mediaPlayer?.pause()        //미디어 플레이어 중지
         nowsong.second = (binding.songSeekbarSb.progress) / 1000            //확인해보기
         nowsong.isPlaying = false
+
         setChangePlay(false)
 
         //앱이 종료되었다가 다시 시작하면 종료된 시점부터 사용하기 위해 종료 시점을 sharedPreferences 로 저장

@@ -26,6 +26,9 @@ interface SongDao {
     @Query("UPDATE SongTable SET second = :second WHERE id = :id")
     fun updateSecondById(second :Int , id :Int)
 
+    @Query("UPDATE SongTable SET isPlaying = :isPlaying WHERE id = :id")
+    fun updateIsPlayingById(isPlaying:  Boolean , id : Int)
+
     @Query("SELECT * FROM SongTable WHERE isLike = :isLike")
     fun getLikedSongs(isLike: Boolean): List<Song>
 

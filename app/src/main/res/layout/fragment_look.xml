@@ -270,251 +270,16 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/look_flo_chart_tv" />
 
-            <ImageView
-                android:id="@+id/lock_popular_album1_iv"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/img_album_exp2"
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/look_flo_chart_rv"
+                android:layout_width="match_parent"
+                android:layout_height="300dp"
+                android:layout_marginTop="10dp"
+                app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lock_recent_tv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album1_num_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="1"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album1_iv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album1_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album1_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="잠이 안온다"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album1_num_tv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album1_num_tv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album1_singer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="젠(zen)"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album1_num_tv"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album1_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popluar_album1_play_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/btn_miniplayer_play"
-                app:layout_constraintBottom_toBottomOf="@id/lock_popular_album1_singer_tv"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album1_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popular_album2_iv"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/img_album_exp2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album1_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album2_num_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="1"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album2_iv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album2_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album2_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="잠이 안온다"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album2_num_tv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album2_num_tv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album2_singer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="젠(zen)"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album2_num_tv"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album2_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popluar_album2_play_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/btn_miniplayer_play"
-                app:layout_constraintBottom_toBottomOf="@id/lock_popular_album2_singer_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album2_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popular_album3_iv"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/img_album_exp2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album2_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album3_num_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="1"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album3_iv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album3_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album3_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="잠이 안온다"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album3_num_tv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album3_num_tv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album3_singer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="젠(zen)"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album3_num_tv"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album3_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popluar_album3_play_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/btn_miniplayer_play"
-                app:layout_constraintBottom_toBottomOf="@id/lock_popular_album3_singer_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album3_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popular_album4_iv"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/img_album_exp2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album3_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album4_num_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="1"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album4_iv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album4_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album4_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="잠이 안온다"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album4_num_tv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album4_num_tv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album4_singer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="젠(zen)"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album4_num_tv"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album4_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popluar_album4_play_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/btn_miniplayer_play"
-                app:layout_constraintBottom_toBottomOf="@id/lock_popular_album4_singer_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album4_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popular_album5_iv"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="20dp"
-                android:src="@drawable/img_album_exp2"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album4_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album5_num_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="1"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album5_iv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album5_iv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album5_title_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="잠이 안온다"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album5_num_tv"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album5_num_tv" />
-
-            <TextView
-                android:id="@+id/lock_popular_album5_singer_tv"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:text="젠(zen)"
-                android:textSize="17sp"
-                app:layout_constraintStart_toEndOf="@id/lock_popular_album5_num_tv"
-                app:layout_constraintTop_toBottomOf="@id/lock_popular_album5_title_tv" />
-
-            <ImageView
-                android:id="@+id/lock_popluar_album5_play_iv"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
-                android:src="@drawable/btn_miniplayer_play"
-                app:layout_constraintBottom_toBottomOf="@id/lock_popular_album5_singer_tv"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/lock_popular_album5_title_tv" />
-
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/lock_recent_tv"/>
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <TextView
@@ -768,6 +533,16 @@
                     android:src="@drawable/img_jenre_exp_3" />
             </LinearLayout>
         </GridLayout>
+
+        <ProgressBar
+            android:id="@+id/look_loading_pb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 

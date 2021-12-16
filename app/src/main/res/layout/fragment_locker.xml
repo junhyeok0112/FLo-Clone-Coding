@@ -18,6 +18,14 @@
         android:layout_marginTop="30dp"
         android:layout_marginStart="20dp"/>
 
+    <TextView
+        android:id="@+id/locker_name_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@id/locker_login_tv"
+        app:layout_constraintTop_toTopOf="@id/locker_login_tv"
+        app:layout_constraintBottom_toBottomOf="@id/locker_login_tv"/>
+
    <TextView
        android:id="@+id/locker_login_tv"
        android:layout_width="wrap_content"

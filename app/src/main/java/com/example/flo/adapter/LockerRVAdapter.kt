@@ -1,9 +1,11 @@
 package com.example.flo.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.flo.Data.Album
 import com.example.flo.Data.LockerSong
 import com.example.flo.Data.Song
@@ -11,7 +13,7 @@ import com.example.flo.databinding.ItemAlbumBinding
 import com.example.flo.databinding.ItemLockerBinding
 import java.util.concurrent.locks.Lock
 
-class LockerRVAdapter() : RecyclerView.Adapter<LockerRVAdapter.ViewHolder>() {
+class LockerRVAdapter(val context:Context) : RecyclerView.Adapter<LockerRVAdapter.ViewHolder>() {
 
     private val songList = ArrayList<Song>()
 
@@ -51,9 +53,14 @@ class LockerRVAdapter() : RecyclerView.Adapter<LockerRVAdapter.ViewHolder>() {
     //뷰 홀더 -> 아이템 객체들을 재활용하기 위한 뷰 , 아이테 객체들을 담는 뷰
     inner class ViewHolder(val binding:ItemLockerBinding) : RecyclerView.ViewHolder(binding.root){
         fun bind(song: Song){
+            if(song.coverImgUrl == ""){     //url없으면 더미데이터
+                Glide.with(context).load(song.coverImg).into(binding.itemLockerCoverIv)
+            } else{
+                Glide.with(context).load(song.coverImgUrl).into(binding.itemLockerCoverIv)
+            }
             binding.itemLockerTitleTv.text = song.title
             binding.itemLockerSingerTv.text = song.singger
-            binding.itemLockerCoverIv.setImageResource(song.coverImg!!)
+
         }
     }
 
